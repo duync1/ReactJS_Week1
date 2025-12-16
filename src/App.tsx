@@ -1,5 +1,7 @@
+import ProductPage from './pages/ProductPage'
+
 function App() {
-  return <h1 className="text-red-500">Hello World</h1>
+  return <ProductPage />
 }
 
 export default App
