@@ -2,9 +2,10 @@ import type { Product } from '../types/Product'
 
 interface Props {
   product: Product
+  handleSelectProduct?: () => void
 }
 
-const ProductItem = ({ product }: Props) => {
+const ProductItem = ({ product, handleSelectProduct }: Props) => {
   return (
     <div
       style={{
@@ -14,6 +15,7 @@ const ProductItem = ({ product }: Props) => {
         overflow: 'hidden',
         transition: 'all 0.3s',
         border: '1px solid #e5e7eb',
+        cursor: 'pointer',
       }}
       onMouseOver={(e) => {
         e.currentTarget.style.boxShadow = '0 10px 15px rgba(0,0,0,0.1)'
@@ -23,6 +25,7 @@ const ProductItem = ({ product }: Props) => {
         e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'
         e.currentTarget.style.transform = 'translateY(0)'
       }}
+      onClick={handleSelectProduct}
     >
       {/* Product Header */}
       <div

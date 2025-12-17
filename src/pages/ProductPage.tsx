@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 import type { Product } from '../types/Product'
 import ProductItem from '../components/ProductItem'
@@ -7,6 +8,7 @@ const ProductPage = () => {
   const [products, setProducts] = useState<Product[]>([])
   const [isVisible, setIsVisible] = useState(true)
 
+  const navigate = useNavigate()
   const handleToggleProducts = () => {
     setIsVisible(!isVisible)
   }
@@ -147,7 +149,11 @@ const ProductPage = () => {
             }}
           >
             {products.map((product) => (
-              <ProductItem key={product.id} product={product} />
+              <ProductItem
+                key={product.id}
+                product={product}
+                handleSelectProduct={() => navigate(`/products/${product.id}`)}
+              />
             ))}
           </div>
 

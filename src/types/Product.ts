@@ -5,4 +5,5 @@ export interface Product {
   price: number
   rating: number
   stock: number
+  images: string[]
 }
