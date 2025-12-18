@@ -1,33 +1,25 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useDispatch, useSelector } from 'react-redux'
 
-import type { Product } from '../types/Product'
 import ProductItem from '../components/ProductItem'
+import type { RootState, AppDispatch } from '../store'
+import { fetchProducts } from '../counter/productSlice'
 
 const ProductPage = () => {
-  const [products, setProducts] = useState<Product[]>([])
   const [isVisible, setIsVisible] = useState(true)
-
+  const products = useSelector((state: RootState) => state.product.products)
   const navigate = useNavigate()
+
+  const dispatch = useDispatch<AppDispatch>()
+
   const handleToggleProducts = () => {
     setIsVisible(!isVisible)
   }
 
-  const handleGetProducts = () => {
-    fetch('https://dummyjson.com/products')
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.products)
-        setIsVisible(true)
-      })
-      .catch((err) => {
-        console.error('Error fetching products:', err)
-      })
-  }
-
   useEffect(() => {
-    handleGetProducts()
-  }, [])
+    dispatch(fetchProducts())
+  }, [dispatch])
 
   return (
     <div

@@ -1,26 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
+import { useDispatch, useSelector } from 'react-redux'
 
-import type { Product } from '../types/Product'
+import type { AppDispatch, RootState } from '../store'
+import { fetchProductById } from '../counter/productSlice'
 
 const ProductDetailPage = () => {
-  const [product, setProduct] = useState<Product | null>(null)
-
+  const dispatch = useDispatch<AppDispatch>()
+  const product = useSelector((state: RootState) => state.product.currentProduct)
   const { id } = useParams()
 
   useEffect(() => {
-    console.log('Fetching product with ID:', id)
-
-    fetch(`https://dummyjson.com/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('Product data received:', data)
-        setProduct(data)
-      })
-      .catch((err) => {
-        console.error('Error fetching product:', err)
-      })
-  }, [id])
+    dispatch(fetchProductById(Number(id)))
+  }, [dispatch, id])
 
   if (!product) {
     return (
