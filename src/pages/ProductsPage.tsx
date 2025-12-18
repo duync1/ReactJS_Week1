@@ -52,35 +52,19 @@ const ProductsPage = () => {
       key: 'id',
       header: 'ID',
       width: '80px',
-      render: (product) => (
-        <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>#{product.id}</span>
-      ),
+      render: (product) => <span className="text-gray-500 text-sm">#{product.id}</span>,
     },
     {
       key: 'title',
       header: 'Product Name',
       width: '250px',
-      render: (product) => (
-        <div style={{ fontWeight: '600', color: '#1f2937', fontSize: '0.95rem' }}>
-          {product.title}
-        </div>
-      ),
+      render: (product) => <div className="font-semibold text-gray-900">{product.title}</div>,
     },
     {
       key: 'description',
       header: 'Description',
       render: (product) => (
-        <div
-          style={{
-            color: '#6b7280',
-            fontSize: '0.875rem',
-            lineHeight: '1.5',
-            maxWidth: '300px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <div className="text-gray-600 text-sm leading-relaxed max-w-xs truncate">
           {product.description}
         </div>
       ),
@@ -91,9 +75,7 @@ const ProductsPage = () => {
       width: '120px',
       align: 'right',
       render: (product) => (
-        <span style={{ color: '#059669', fontWeight: '700', fontSize: '0.95rem' }}>
-          ${product.price.toFixed(2)}
-        </span>
+        <span className="text-emerald-600 font-bold">${product.price.toFixed(2)}</span>
       ),
     },
     {
@@ -103,15 +85,13 @@ const ProductsPage = () => {
       align: 'center',
       render: (product) => (
         <span
-          style={{
-            backgroundColor:
-              product.quantity > 50 ? '#dbeafe' : product.quantity > 0 ? '#fef3c7' : '#fee2e2',
-            color: product.quantity > 50 ? '#1e40af' : product.quantity > 0 ? '#92400e' : '#991b1b',
-            padding: '0.25rem 0.75rem',
-            borderRadius: '0.375rem',
-            fontSize: '0.875rem',
-            fontWeight: '600',
-          }}
+          className={`px-3 py-1 rounded-md text-sm font-semibold ${
+            product.quantity > 50
+              ? 'bg-blue-100 text-blue-800'
+              : product.quantity > 0
+                ? 'bg-amber-100 text-amber-800'
+                : 'bg-red-100 text-red-800'
+          }`}
         >
           {product.quantity}
         </span>
@@ -123,29 +103,13 @@ const ProductsPage = () => {
       width: '150px',
       align: 'center',
       render: (product) => (
-        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+        <div className="flex gap-2 justify-center">
           <button
             onClick={(e) => {
               e.stopPropagation()
               handleEditProduct(product)
             }}
-            style={{
-              padding: '0.375rem 0.75rem',
-              fontSize: '0.875rem',
-              fontWeight: '600',
-              border: '1px solid #3b82f6',
-              borderRadius: '0.375rem',
-              backgroundColor: 'white',
-              color: '#3b82f6',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#eff6ff'
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'white'
-            }}
+            className="px-3 py-1.5 text-sm font-semibold text-blue-600 border border-blue-600 rounded-md bg-white hover:bg-blue-50 transition-colors"
           >
             ✏️ Edit
           </button>
@@ -154,23 +118,7 @@ const ProductsPage = () => {
               e.stopPropagation()
               handleDeleteProduct(product)
             }}
-            style={{
-              padding: '0.375rem 0.75rem',
-              fontSize: '0.875rem',
-              fontWeight: '600',
-              border: '1px solid #ef4444',
-              borderRadius: '0.375rem',
-              backgroundColor: 'white',
-              color: '#ef4444',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#fef2f2'
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'white'
-            }}
+            className="px-3 py-1.5 text-sm font-semibold text-red-600 border border-red-600 rounded-md bg-white hover:bg-red-50 transition-colors"
           >
             🗑️
           </button>
@@ -180,58 +128,55 @@ const ProductsPage = () => {
   ]
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       {/* Page Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '2rem',
-          paddingBottom: '1rem',
-          borderBottom: '2px solid #e5e7eb',
-        }}
-      >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b-2 border-gray-200">
         <div>
-          <h1
-            style={{
-              fontSize: '2rem',
-              fontWeight: 'bold',
-              color: '#1f2937',
-              margin: '0 0 0.5rem 0',
-            }}
-          >
-            Products Management
-          </h1>
-          <p style={{ color: '#6b7280', margin: 0, fontSize: '0.95rem' }}>
-            Manage your product inventory
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Products Management</h1>
+          <p className="text-gray-600">Manage your product inventory</p>
         </div>
         <button
           onClick={handleAddProduct}
-          style={{
-            backgroundColor: '#10b981',
-            color: 'white',
-            padding: '0.75rem 1.5rem',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            border: 'none',
-            borderRadius: '0.5rem',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#059669'
-            e.currentTarget.style.transform = 'translateY(-1px)'
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = '#10b981'
-            e.currentTarget.style.transform = 'translateY(0)'
-          }}
+          className="px-6 py-3 text-sm font-semibold text-white bg-emerald-600 rounded-lg shadow-md hover:bg-emerald-700 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 whitespace-nowrap"
         >
           ➕ Add Product
         </button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="text-4xl mb-3">📦</div>
+          <div className="text-sm text-gray-600 mb-1">Total Products</div>
+          <div className="text-3xl font-bold text-gray-900">{products.length}</div>
+        </div>
+        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="text-4xl mb-3">📊</div>
+          <div className="text-sm text-gray-600 mb-1">Total Quantity</div>
+          <div className="text-3xl font-bold text-gray-900">
+            {products.reduce((acc, p) => acc + p.quantity, 0)}
+          </div>
+        </div>
+        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="text-4xl mb-3">💰</div>
+          <div className="text-sm text-gray-600 mb-1">Total Value</div>
+          <div className="text-3xl font-bold text-emerald-600">
+            $
+            {products.length > 0
+              ? products.reduce((acc, p) => acc + p.price * p.quantity, 0).toFixed(0)
+              : '0'}
+          </div>
+        </div>
+        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="text-4xl mb-3">💲</div>
+          <div className="text-sm text-gray-600 mb-1">Avg Price</div>
+          <div className="text-3xl font-bold text-blue-600">
+            $
+            {products.length > 0
+              ? (products.reduce((acc, p) => acc + p.price, 0) / products.length).toFixed(2)
+              : '0'}
+          </div>
+        </div>
       </div>
 
       {/* Products Table */}

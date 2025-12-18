@@ -28,58 +28,30 @@ const Table = <T,>({
 }: TableProps<T>) => {
   if (data.length === 0) {
     return (
-      <div
-        style={{
-          backgroundColor: 'white',
-          borderRadius: '0.75rem',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          padding: '4rem 2rem',
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>{emptyIcon}</div>
-        <div style={{ color: '#9ca3af', fontSize: '1.125rem' }}>{emptyMessage}</div>
+      <div className="bg-white rounded-xl shadow-sm p-16 text-center">
+        <div className="text-6xl mb-4">{emptyIcon}</div>
+        <div className="text-gray-400 text-lg">{emptyMessage}</div>
       </div>
     )
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: 'white',
-        borderRadius: '0.75rem',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        overflow: 'hidden',
-      }}
-    >
-      <div style={{ overflowX: 'auto' }}>
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-          }}
-        >
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
           <thead>
-            <tr
-              style={{
-                backgroundColor: '#f9fafb',
-                borderBottom: '2px solid #e5e7eb',
-              }}
-            >
+            <tr className="bg-gray-50 border-b-2 border-gray-200">
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  style={{
-                    padding: '1rem',
-                    textAlign: column.align || 'left',
-                    fontSize: '0.875rem',
-                    fontWeight: '700',
-                    color: '#374151',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    width: column.width,
-                  }}
+                  className={`px-4 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider ${
+                    column.align === 'center'
+                      ? 'text-center'
+                      : column.align === 'right'
+                        ? 'text-right'
+                        : 'text-left'
+                  }`}
+                  style={{ width: column.width }}
                 >
                   {column.header}
                 </th>
@@ -91,26 +63,20 @@ const Table = <T,>({
               <tr
                 key={keyExtractor(item)}
                 onClick={() => onRowClick?.(item)}
-                style={{
-                  backgroundColor: index % 2 === 0 ? 'white' : '#f9fafb',
-                  borderBottom: '1px solid #e5e7eb',
-                  transition: 'background-color 0.15s',
-                  cursor: onRowClick ? 'pointer' : 'default',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f3f4f6'
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = index % 2 === 0 ? 'white' : '#f9fafb'
-                }}
+                className={`border-b border-gray-200 transition-colors ${
+                  index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                } hover:bg-gray-100 ${onRowClick ? 'cursor-pointer' : ''}`}
               >
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    style={{
-                      padding: '1rem',
-                      textAlign: column.align || 'left',
-                    }}
+                    className={`px-4 py-4 ${
+                      column.align === 'center'
+                        ? 'text-center'
+                        : column.align === 'right'
+                          ? 'text-right'
+                          : 'text-left'
+                    }`}
                   >
                     {column.render
                       ? column.render(item, index)
@@ -124,17 +90,8 @@ const Table = <T,>({
       </div>
 
       {/* Footer with count */}
-      <div
-        style={{
-          padding: '1rem',
-          backgroundColor: '#f9fafb',
-          borderTop: '1px solid #e5e7eb',
-          fontSize: '0.875rem',
-          color: '#6b7280',
-          textAlign: 'center',
-        }}
-      >
-        Showing <strong style={{ color: '#1f2937' }}>{data.length}</strong> item
+      <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm text-gray-600 text-center">
+        Showing <strong className="text-gray-900">{data.length}</strong> item
         {data.length !== 1 ? 's' : ''}
       </div>
     </div>

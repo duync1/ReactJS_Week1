@@ -17,84 +17,31 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, itemName }: ConfirmDel
     <>
       {/* Backdrop */}
       <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          backdropFilter: 'blur(4px)',
-          zIndex: 999,
-          animation: 'fadeIn 0.2s ease-in-out',
-        }}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] animate-fadeIn"
         onClick={onClose}
       />
 
       {/* Modal */}
       <div
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: 'white',
-          borderRadius: '1rem',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-          width: '90%',
-          maxWidth: '450px',
-          zIndex: 1000,
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          animation: 'slideIn 0.3s ease-out',
-        }}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl w-[95%] sm:w-[90%] md:w-[450px] z-[1000] animate-slideIn"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Content */}
-        <div style={{ padding: '2rem' }}>
+        <div className="p-8">
           {/* Icon */}
-          <div
-            style={{
-              width: '64px',
-              height: '64px',
-              margin: '0 auto 1.5rem',
-              backgroundColor: '#fee2e2',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '2rem',
-            }}
-          >
+          <div className="w-16 h-16 mx-auto mb-6 bg-red-100 rounded-full flex items-center justify-center text-4xl">
             ⚠️
           </div>
 
           {/* Title */}
-          <h2
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              color: '#1f2937',
-              textAlign: 'center',
-              margin: '0 0 0.75rem 0',
-            }}
-          >
-            Delete Product?
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">Delete Product?</h2>
 
           {/* Description */}
-          <p
-            style={{
-              color: '#6b7280',
-              fontSize: '0.95rem',
-              textAlign: 'center',
-              margin: '0 0 2rem 0',
-              lineHeight: '1.5',
-            }}
-          >
+          <p className="text-gray-600 text-center mb-8 leading-relaxed">
             {itemName ? (
               <>
                 Are you sure you want to delete{' '}
-                <strong style={{ color: '#1f2937' }}>"{itemName}"</strong>? This action cannot be
+                <strong className="text-gray-900">"{itemName}"</strong>? This action cannot be
                 undone.
               </>
             ) : (
@@ -103,63 +50,16 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, itemName }: ConfirmDel
           </p>
 
           {/* Buttons */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '1rem',
-              justifyContent: 'center',
-            }}
-          >
+          <div className="flex gap-4 justify-center">
             <button
               onClick={onClose}
-              style={{
-                padding: '0.75rem 1.5rem',
-                fontSize: '0.95rem',
-                fontWeight: '600',
-                border: '2px solid #e5e7eb',
-                borderRadius: '0.5rem',
-                backgroundColor: 'white',
-                color: '#374151',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                minWidth: '120px',
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#f9fafb'
-                e.currentTarget.style.borderColor = '#d1d5db'
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = 'white'
-                e.currentTarget.style.borderColor = '#e5e7eb'
-              }}
+              className="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all min-w-[120px]"
             >
               Cancel
             </button>
             <button
               onClick={handleConfirm}
-              style={{
-                padding: '0.75rem 1.5rem',
-                fontSize: '0.95rem',
-                fontWeight: '700',
-                border: 'none',
-                borderRadius: '0.5rem',
-                backgroundColor: '#ef4444',
-                color: 'white',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                boxShadow: '0 2px 4px rgba(239, 68, 68, 0.2)',
-                minWidth: '120px',
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#dc2626'
-                e.currentTarget.style.transform = 'translateY(-1px)'
-                e.currentTarget.style.boxShadow = '0 4px 6px rgba(239, 68, 68, 0.3)'
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = '#ef4444'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 2px 4px rgba(239, 68, 68, 0.2)'
-              }}
+              className="px-6 py-2.5 text-sm font-bold text-white bg-red-600 rounded-lg shadow-lg hover:bg-red-700 hover:-translate-y-0.5 active:translate-y-0 transition-all min-w-[120px]"
             >
               🗑️ Delete
             </button>
@@ -182,6 +82,12 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, itemName }: ConfirmDel
                 opacity: 1;
                 transform: translate(-50%, -50%);
               }
+            }
+            .animate-fadeIn {
+              animation: fadeIn 0.2s ease-in-out;
+            }
+            .animate-slideIn {
+              animation: slideIn 0.3s ease-out;
             }
           `}
         </style>
