@@ -5,30 +5,17 @@ import Sidebar from '../components/layout/Sidebar'
 
 const LayoutPage = () => {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: '#f9fafb',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-      }}
-    >
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <Header />
 
       {/* Main Content Area */}
-      <div style={{ display: 'flex' }}>
+      <div className="flex">
         {/* Sidebar */}
         <Sidebar />
 
         {/* Main Content */}
-        <main
-          style={{
-            flex: 1,
-            padding: '2rem',
-            minHeight: 'calc(100vh - 64px)',
-            overflowY: 'auto',
-          }}
-        >
+        <main className="flex-1 min-h-[calc(100vh-4rem)] overflow-y-auto">
           <Outlet />
         </main>
       </div>

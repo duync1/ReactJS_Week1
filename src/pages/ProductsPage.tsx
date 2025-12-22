@@ -130,14 +130,16 @@ const ProductsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b-2 border-gray-200">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b-2 border-gradient-to-r from-blue-200 to-purple-200">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Products Management</h1>
-          <p className="text-gray-600">Manage your product inventory</p>
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-2">
+            Products Management
+          </h1>
+          <p className="text-gray-600 font-medium">📊 Manage your product inventory</p>
         </div>
         <button
           onClick={handleAddProduct}
-          className="px-6 py-3 text-sm font-semibold text-white bg-emerald-600 rounded-lg shadow-md hover:bg-emerald-700 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 whitespace-nowrap"
+          className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:from-emerald-700 hover:to-emerald-800 hover:-translate-y-1 hover:shadow-xl active:translate-y-0 transition-all duration-200 whitespace-nowrap"
         >
           ➕ Add Product
         </button>
@@ -145,32 +147,40 @@ const ProductsPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="text-4xl mb-3">📦</div>
-          <div className="text-sm text-gray-600 mb-1">Total Products</div>
-          <div className="text-3xl font-bold text-gray-900">{products.length}</div>
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-blue-200">
+          <div className="text-5xl mb-3 animate-pulse">📦</div>
+          <div className="text-sm text-blue-700 font-semibold mb-1 uppercase tracking-wide">
+            Total Products
+          </div>
+          <div className="text-4xl font-black text-blue-900">{products.length}</div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="text-4xl mb-3">📊</div>
-          <div className="text-sm text-gray-600 mb-1">Total Quantity</div>
-          <div className="text-3xl font-bold text-gray-900">
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-purple-200">
+          <div className="text-5xl mb-3 animate-pulse">📊</div>
+          <div className="text-sm text-purple-700 font-semibold mb-1 uppercase tracking-wide">
+            Total Quantity
+          </div>
+          <div className="text-4xl font-black text-purple-900">
             {products.reduce((acc, p) => acc + p.quantity, 0)}
           </div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="text-4xl mb-3">💰</div>
-          <div className="text-sm text-gray-600 mb-1">Total Value</div>
-          <div className="text-3xl font-bold text-emerald-600">
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-emerald-200">
+          <div className="text-5xl mb-3 animate-pulse">💰</div>
+          <div className="text-sm text-emerald-700 font-semibold mb-1 uppercase tracking-wide">
+            Total Value
+          </div>
+          <div className="text-4xl font-black text-emerald-900">
             $
             {products.length > 0
               ? products.reduce((acc, p) => acc + p.price * p.quantity, 0).toFixed(0)
               : '0'}
           </div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="text-4xl mb-3">💲</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Price</div>
-          <div className="text-3xl font-bold text-blue-600">
+        <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-amber-200">
+          <div className="text-5xl mb-3 animate-pulse">💲</div>
+          <div className="text-sm text-amber-700 font-semibold mb-1 uppercase tracking-wide">
+            Avg Price
+          </div>
+          <div className="text-4xl font-black text-amber-900">
             $
             {products.length > 0
               ? (products.reduce((acc, p) => acc + p.price, 0) / products.length).toFixed(2)

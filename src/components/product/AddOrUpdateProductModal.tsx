@@ -142,10 +142,10 @@ const AddOrUpdateProductModal = ({
                   value={formData.title}
                   onChange={(e) => handleChange('title', e.target.value)}
                   placeholder="Enter product title"
-                  className={`w-full px-4 py-3 border-2 rounded-lg text-base outline-none transition-all ${
+                  className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
                     errors.title
-                      ? 'border-red-500 focus:border-red-500'
-                      : 'border-gray-200 focus:border-blue-500'
+                      ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
+                      : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
                   }`}
                 />
                 {errors.title && (
@@ -165,10 +165,10 @@ const AddOrUpdateProductModal = ({
                   onChange={(e) => handleChange('description', e.target.value)}
                   placeholder="Enter product description"
                   rows={4}
-                  className={`w-full px-4 py-3 border-2 rounded-lg text-base outline-none transition-all resize-y ${
+                  className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all resize-y shadow-sm hover:shadow-md ${
                     errors.description
-                      ? 'border-red-500 focus:border-red-500'
-                      : 'border-gray-200 focus:border-blue-500'
+                      ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
+                      : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
                   }`}
                 />
                 {errors.description && (
@@ -191,10 +191,10 @@ const AddOrUpdateProductModal = ({
                     value={formData.price}
                     onChange={(e) => handleChange('price', parseFloat(e.target.value) || 0)}
                     placeholder="0.00"
-                    className={`w-full px-4 py-3 border-2 rounded-lg text-base outline-none transition-all ${
+                    className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
                       errors.price
-                        ? 'border-red-500 focus:border-red-500'
-                        : 'border-gray-200 focus:border-blue-500'
+                        ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
+                        : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
                     }`}
                   />
                   {errors.price && <p className="mt-1 text-xs text-red-600">{errors.price}</p>}
@@ -210,10 +210,10 @@ const AddOrUpdateProductModal = ({
                     value={formData.quantity}
                     onChange={(e) => handleChange('quantity', parseInt(e.target.value) || 0)}
                     placeholder="0"
-                    className={`w-full px-4 py-3 border-2 rounded-lg text-base outline-none transition-all ${
+                    className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
                       errors.quantity
-                        ? 'border-red-500 focus:border-red-500'
-                        : 'border-gray-200 focus:border-blue-500'
+                        ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
+                        : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
                     }`}
                   />
                   {errors.quantity && (
@@ -224,52 +224,26 @@ const AddOrUpdateProductModal = ({
             </div>
 
             {/* Modal Footer */}
-            <div className="flex items-center justify-end gap-3 px-6 py-5 border-t border-gray-200 bg-gray-50 sticky bottom-0 rounded-b-2xl">
+            <div className="flex items-center justify-end gap-4 px-6 py-5 border-t-2 border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 sticky bottom-0 rounded-b-2xl">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all"
+                className="px-8 py-3 text-sm font-bold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 hover:shadow-md transition-all"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className={`px-6 py-2.5 text-sm font-bold text-white rounded-lg shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all ${
+                className={`px-8 py-3 text-sm font-bold text-white rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 transition-all ${
                   product
-                    ? 'bg-amber-500 hover:bg-amber-600'
-                    : 'bg-emerald-600 hover:bg-emerald-700'
+                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700'
+                    : 'bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800'
                 }`}
               >
                 {product ? '💾 Update Product' : '➕ Add Product'}
               </button>
             </div>
           </form>
-
-          {/* CSS Animations */}
-          <style>
-            {`
-            @keyframes fadeIn {
-              from { opacity: 0; }
-              to { opacity: 1; }
-            }
-            @keyframes scaleIn {
-              0% {
-                opacity: 0;
-                transform: scale(0.9);
-              }
-              100% {
-                opacity: 1;
-                transform: scale(1);
-              }
-            }
-            .animate-fadeIn {
-              animation: fadeIn 0.15s ease-out;
-            }
-            .animate-scaleIn {
-              animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            }
-          `}
-          </style>
         </div>
       </div>
     </>

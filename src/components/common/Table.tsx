@@ -36,11 +36,11 @@ const Table = <T,>({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-50 border-b-2 border-gray-200">
+            <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-300">
               {columns.map((column) => (
                 <th
                   key={column.key}
@@ -63,9 +63,9 @@ const Table = <T,>({
               <tr
                 key={keyExtractor(item)}
                 onClick={() => onRowClick?.(item)}
-                className={`border-b border-gray-200 transition-colors ${
+                className={`border-b border-gray-200 transition-all duration-200 ${
                   index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                } hover:bg-gray-100 ${onRowClick ? 'cursor-pointer' : ''}`}
+                } hover:bg-blue-50 hover:shadow-md ${onRowClick ? 'cursor-pointer' : ''}`}
               >
                 {columns.map((column) => (
                   <td
@@ -90,8 +90,8 @@ const Table = <T,>({
       </div>
 
       {/* Footer with count */}
-      <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm text-gray-600 text-center">
-        Showing <strong className="text-gray-900">{data.length}</strong> item
+      <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-t-2 border-gray-300 text-sm text-gray-600 text-center font-medium">
+        Showing <strong className="text-blue-600">{data.length}</strong> item
         {data.length !== 1 ? 's' : ''}
       </div>
     </div>
