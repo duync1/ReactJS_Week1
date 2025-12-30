@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react'
 
 import { type Product } from '../../types/Product'
+import type { CreateProductDTO } from '../../types/dto/CreateProductDTO'
 
 interface AddOrUpdateProductModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (product: Product) => void
+  onSave: (product: CreateProductDTO) => void
   product?: Product | null
 }
 
@@ -16,8 +17,8 @@ const AddOrUpdateProductModal = ({
   onSave,
   product,
 }: AddOrUpdateProductModalProps) => {
-  const [formData, setFormData] = useState<Omit<Product, 'id'>>({
-    title: '',
+  const [formData, setFormData] = useState<CreateProductDTO>({
+    name: '',
     description: '',
     price: 0,
     quantity: 0,
@@ -28,14 +29,14 @@ const AddOrUpdateProductModal = ({
   useEffect(() => {
     if (product) {
       setFormData({
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        quantity: product.quantity,
+        name: product.name || '',
+        description: product.description || '',
+        price: typeof product.price === 'number' ? product.price : 0,
+        quantity: typeof product.quantity === 'number' ? product.quantity : 0,
       })
     } else {
       setFormData({
-        title: '',
+        name: '',
         description: '',
         price: 0,
         quantity: 0,
@@ -47,8 +48,8 @@ const AddOrUpdateProductModal = ({
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required'
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required'
     }
     if (!formData.description.trim()) {
       newErrors.description = 'Description is required'
@@ -71,9 +72,11 @@ const AddOrUpdateProductModal = ({
       return
     }
 
-    const productData: Product = {
-      id: product?.id || Date.now(),
-      ...formData,
+    const productData: CreateProductDTO = {
+      name: formData.name,
+      description: formData.description,
+      price: formData.price,
+      quantity: formData.quantity,
     }
 
     onSave(productData)
@@ -132,25 +135,25 @@ const AddOrUpdateProductModal = ({
           {/* Modal Body */}
           <form onSubmit={handleSubmit}>
             <div className="px-6 py-6 space-y-5">
-              {/* Title */}
+              {/* Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Product Title <span className="text-red-500">*</span>
+                  Product Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.title}
-                  onChange={(e) => handleChange('title', e.target.value)}
-                  placeholder="Enter product title"
+                  value={formData.name}
+                  onChange={(e) => handleChange('name', e.target.value)}
+                  placeholder="Enter product name"
                   className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
-                    errors.title
+                    errors.name
                       ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
                       : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
                   }`}
                 />
-                {errors.title && (
+                {errors.name && (
                   <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                    <span>⚠️</span> {errors.title}
+                    <span>⚠️</span> {errors.name}
                   </p>
                 )}
               </div>

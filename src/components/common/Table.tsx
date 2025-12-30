@@ -7,6 +7,7 @@ export interface Column<T> {
   width?: string
   align?: 'left' | 'center' | 'right'
   render?: (item: T, index: number) => ReactNode
+  hidden?: boolean
 }
 
 interface TableProps<T> {
@@ -34,6 +35,7 @@ const Table = <T,>({
       </div>
     )
   }
+  const visibleColumns = columns.filter((column) => !column.hidden)
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
@@ -41,7 +43,7 @@ const Table = <T,>({
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-300">
-              {columns.map((column) => (
+              {visibleColumns.map((column) => (
                 <th
                   key={column.key}
                   className={`px-4 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider ${
@@ -67,7 +69,7 @@ const Table = <T,>({
                   index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                 } hover:bg-blue-50 hover:shadow-md ${onRowClick ? 'cursor-pointer' : ''}`}
               >
-                {columns.map((column) => (
+                {visibleColumns.map((column) => (
                   <td
                     key={column.key}
                     className={`px-4 py-4 ${

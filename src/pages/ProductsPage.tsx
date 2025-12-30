@@ -1,20 +1,28 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
 
 import Table, { type Column } from '../components/common/Table'
 import AddOrUpdateProductModal from '../components/product/AddOrUpdateProductModal'
 import ConfirmDeleteModal from '../components/product/ConfirmDeleteModal'
 import { type Product } from '../types/Product'
-import type { RootState } from '../store'
-import { addProduct, deleteProduct, updateProduct } from '../features/product/productSlice'
+import { useAppDispatch, type RootState } from '../redux/store'
+import {
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+  updateProduct,
+} from '../redux/slice/productSlice'
+import type { CreateProductDTO } from '../types/dto/CreateProductDTO'
 
 const ProductsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [productToDelete, setProductToDelete] = useState<Product | null>(null)
-  const products = useSelector((state: RootState) => state.product.products)
-  const dispatch = useDispatch()
+  const products = useSelector((state: RootState) => state.products.listProducts)
+  const role = useSelector((state: RootState) => state.auth.user.role)
+  const dispatch = useAppDispatch()
   const handleAddProduct = () => {
     setSelectedProduct(null)
     setIsModalOpen(true)
@@ -25,12 +33,18 @@ const ProductsPage = () => {
     setIsModalOpen(true)
   }
 
-  const handleSaveProduct = (product: Product) => {
+  const handleSaveProduct = (product: CreateProductDTO) => {
     if (selectedProduct) {
-      dispatch(updateProduct(product))
+      dispatch(updateProduct({ id: selectedProduct.id, data: product }))
+        .unwrap()
+        .then(() => toast.success('Product updated successfully'))
+        .catch(() => toast.error('Failed to update product'))
     } else {
       // Add new product
-      dispatch(addProduct(product))
+      dispatch(createProduct(product))
+        .unwrap()
+        .then(() => toast.success('Product created successfully'))
+        .catch(() => toast.error('Failed to create product'))
     }
   }
 
@@ -42,10 +56,19 @@ const ProductsPage = () => {
   const confirmDelete = () => {
     if (productToDelete) {
       dispatch(deleteProduct(productToDelete.id))
+        .unwrap()
+        .then(() => toast.success('Product deleted successfully'))
+        .catch(() => toast.error('Failed to delete product'))
       setProductToDelete(null)
+      setIsDeleteModalOpen(false)
     }
   }
 
+  useEffect(() => {
+    dispatch(getAllProducts({ page: 1, limit: 10 }))
+  }, [dispatch])
+
+  console.log('Products in state:', products)
   // Define columns for products table
   const columns: Column<Product>[] = [
     {
@@ -55,10 +78,10 @@ const ProductsPage = () => {
       render: (product) => <span className="text-gray-500 text-sm">#{product.id}</span>,
     },
     {
-      key: 'title',
+      key: 'name',
       header: 'Product Name',
       width: '250px',
-      render: (product) => <div className="font-semibold text-gray-900">{product.title}</div>,
+      render: (product) => <div className="font-semibold text-gray-900">{product.name}</div>,
     },
     {
       key: 'description',
@@ -102,28 +125,30 @@ const ProductsPage = () => {
       header: 'Actions',
       width: '150px',
       align: 'center',
-      render: (product) => (
-        <div className="flex gap-2 justify-center">
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              handleEditProduct(product)
-            }}
-            className="px-3 py-1.5 text-sm font-semibold text-blue-600 border border-blue-600 rounded-md bg-white hover:bg-blue-50 transition-colors"
-          >
-            ✏️ Edit
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              handleDeleteProduct(product)
-            }}
-            className="px-3 py-1.5 text-sm font-semibold text-red-600 border border-red-600 rounded-md bg-white hover:bg-red-50 transition-colors"
-          >
-            🗑️
-          </button>
-        </div>
-      ),
+      hidden: role !== 'admin',
+      render: (product) =>
+        role === 'admin' && (
+          <div className="flex gap-2 justify-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                handleEditProduct(product)
+              }}
+              className="px-3 py-1.5 text-sm font-semibold text-blue-600 border border-blue-600 rounded-md bg-white hover:bg-blue-50 transition-colors"
+            >
+              ✏️ Edit
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                handleDeleteProduct(product)
+              }}
+              className="px-3 py-1.5 text-sm font-semibold text-red-600 border border-red-600 rounded-md bg-white hover:bg-red-50 transition-colors"
+            >
+              🗑️
+            </button>
+          </div>
+        ),
     },
   ]
 
@@ -137,12 +162,14 @@ const ProductsPage = () => {
           </h1>
           <p className="text-gray-600 font-medium">📊 Manage your product inventory</p>
         </div>
-        <button
-          onClick={handleAddProduct}
-          className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:from-emerald-700 hover:to-emerald-800 hover:-translate-y-1 hover:shadow-xl active:translate-y-0 transition-all duration-200 whitespace-nowrap"
-        >
-          ➕ Add Product
-        </button>
+        {role === 'admin' && (
+          <button
+            onClick={handleAddProduct}
+            className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:from-emerald-700 hover:to-emerald-800 hover:-translate-y-1 hover:shadow-xl active:translate-y-0 transition-all duration-200 whitespace-nowrap"
+          >
+            ➕ Add Product
+          </button>
+        )}
       </div>
 
       {/* Stats Cards */}
@@ -214,7 +241,7 @@ const ProductsPage = () => {
           setProductToDelete(null)
         }}
         onConfirm={confirmDelete}
-        itemName={productToDelete?.title}
+        itemName={productToDelete?.name}
       />
     </div>
   )
