@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
-import { toast } from 'react-toastify/unstyled'
+import { toast } from 'react-toastify'
 
 import type { RegisterDTO } from '../../types/dto/RegisterDTO'
 import { useAppDispatch } from '../../redux/store'
@@ -23,8 +23,13 @@ const RegisterPage = () => {
     const { confirmPassword, ...registerData } = data
     dispatch(registerAction(registerData as RegisterDTO))
       .unwrap()
-      .then(() => navigate('/'))
-      .catch(() => toast.error('Registration failed. Please try again.'))
+      .then(() => {
+        toast.success('Registration successful! Please log in.')
+        navigate('/login')
+      })
+      .catch((error) => {
+        toast.error(error?.message || 'Registration failed. Please try again.')
+      })
   }
 
   return (
@@ -161,7 +166,7 @@ const RegisterPage = () => {
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition duration-150 ease-in-out hover:scale-[1.02] active:scale-[0.98]"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition duration-150 ease-in-out hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <svg

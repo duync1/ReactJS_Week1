@@ -11,6 +11,7 @@ import {
 } from '../../api/products/products.api'
 
 export interface GetAllProductsResponse {
+  forStats: unknown
   items: Product[]
   total: number
   page: number
@@ -25,6 +26,7 @@ interface ProductState {
   page: number
   limit: number
   totalPages: number
+  allProductsForStats: Product[]
 }
 
 const initialState: ProductState = {
@@ -34,6 +36,7 @@ const initialState: ProductState = {
   page: 1,
   limit: 10,
   totalPages: 0,
+  allProductsForStats: [],
 }
 
 export const createProduct = createAsyncThunk(
@@ -53,8 +56,8 @@ export const updateProduct = createAsyncThunk(
 )
 
 export const deleteProduct = createAsyncThunk('product/deleteProduct', async (id: number) => {
-  const response = await deleteProductByIdApi(id)
-  return response.data
+  await deleteProductByIdApi(id)
+  return { id }
 })
 
 export const getProductById = createAsyncThunk('product/getProductById', async (id: number) => {
@@ -64,10 +67,10 @@ export const getProductById = createAsyncThunk('product/getProductById', async (
 
 export const getAllProducts = createAsyncThunk<
   GetAllProductsResponse,
-  { page: number; limit: number }
+  { page: number; limit: number; forStats?: boolean }
 >('product/getAllProducts', async (params) => {
   const response = await getAllProductsApi(params.page, params.limit)
-  return response.data
+  return { ...response.data, forStats: params.forStats }
 })
 
 const productSlice = createSlice({
@@ -77,16 +80,24 @@ const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createProduct.fulfilled, (state, action: PayloadAction<Product>) => {
-        state.listProducts.push(action.payload)
+        state.listProducts.unshift(action.payload)
+        state.allProductsForStats.unshift(action.payload)
       })
       .addCase(updateProduct.fulfilled, (state, action: PayloadAction<Product>) => {
         const index = state.listProducts.findIndex((p) => p.id === action.payload.id)
         if (index !== -1) {
           state.listProducts[index] = action.payload
         }
+        const statsIndex = state.allProductsForStats.findIndex((p) => p.id === action.payload.id)
+        if (statsIndex !== -1) {
+          state.allProductsForStats[statsIndex] = action.payload
+        }
       })
       .addCase(deleteProduct.fulfilled, (state, action: PayloadAction<{ id: number }>) => {
         state.listProducts = state.listProducts.filter((p) => p.id !== action.payload.id)
+        state.allProductsForStats = state.allProductsForStats.filter(
+          (p) => p.id !== action.payload.id
+        )
       })
       .addCase(getProductById.fulfilled, (state, action: PayloadAction<Product>) => {
         const index = state.listProducts.findIndex((p) => p.id === action.payload.id)
@@ -94,13 +105,20 @@ const productSlice = createSlice({
           state.currentProduct = action.payload
         }
       })
-      .addCase(getAllProducts.fulfilled, (state, action: PayloadAction<GetAllProductsResponse>) => {
-        state.listProducts = action.payload.items
-        state.total = action.payload.total
-        state.page = action.payload.page
-        state.limit = action.payload.limit
-        state.totalPages = action.payload.totalPages
-      })
+      .addCase(
+        getAllProducts.fulfilled,
+        (state, action: ReturnType<typeof getAllProducts.fulfilled>) => {
+          if (action.payload.forStats) {
+            state.allProductsForStats = action.payload.items
+          } else {
+            state.listProducts = action.payload.items
+            state.total = action.payload.total
+            state.page = action.payload.page
+            state.limit = action.payload.limit
+            state.totalPages = action.payload.totalPages
+          }
+        }
+      )
   },
 })
 

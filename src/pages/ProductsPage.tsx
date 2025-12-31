@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 
 import Table, { type Column } from '../components/common/Table'
+import Pagination from '../components/common/Pagination'
 import AddOrUpdateProductModal from '../components/product/AddOrUpdateProductModal'
 import ConfirmDeleteModal from '../components/product/ConfirmDeleteModal'
 import { type Product } from '../types/Product'
@@ -21,8 +23,16 @@ const ProductsPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [productToDelete, setProductToDelete] = useState<Product | null>(null)
   const products = useSelector((state: RootState) => state.products.listProducts)
+  const allProductsForStats = useSelector((state: RootState) => state.products.allProductsForStats)
+  // Lấy page từ URL query param, không lấy từ Redux
+  const [searchParams, setSearchParams] = useSearchParams()
+  const pageParam = parseInt(searchParams.get('page') || '1', 10)
+  const totalPages = useSelector((state: RootState) => state.products.totalPages)
+  const limit = useSelector((state: RootState) => state.products.limit)
   const role = useSelector((state: RootState) => state.auth.user.role)
+  // Stats Cards sẽ tính toán dựa trên products (dữ liệu trang hiện tại)
   const dispatch = useAppDispatch()
+  // const navigate = useNavigate()
   const handleAddProduct = () => {
     setSelectedProduct(null)
     setIsModalOpen(true)
@@ -43,7 +53,11 @@ const ProductsPage = () => {
       // Add new product
       dispatch(createProduct(product))
         .unwrap()
-        .then(() => toast.success('Product created successfully'))
+        .then(() => {
+          toast.success('Product created successfully')
+          // Gọi lại API để lấy đúng dữ liệu trang hiện tại
+          dispatch(getAllProducts({ page: pageParam, limit }))
+        })
         .catch(() => toast.error('Failed to create product'))
     }
   }
@@ -65,29 +79,49 @@ const ProductsPage = () => {
   }
 
   useEffect(() => {
-    dispatch(getAllProducts({ page: 1, limit: 10 }))
-  }, [dispatch])
+    dispatch(getAllProducts({ page: pageParam, limit }))
+    // Lấy toàn bộ sản phẩm cho stats (limit lớn)
+    dispatch(getAllProducts({ page: 1, limit: 10000, forStats: true }))
+  }, [dispatch, pageParam, limit])
 
-  console.log('Products in state:', products)
+  // Không đồng bộ page từ Redux ra URL nữa
+
+  const handlePageChange = (newPage: number) => {
+    setSearchParams({ page: String(newPage) })
+  }
+
   // Define columns for products table
   const columns: Column<Product>[] = [
     {
-      key: 'id',
-      header: 'ID',
-      width: '80px',
-      render: (product) => <span className="text-gray-500 text-sm">#{product.id}</span>,
+      key: 'no',
+      header: 'No',
+      width: '60px',
+      render: (_product, index) => (
+        <span className="text-gray-700 font-semibold">{(pageParam - 1) * limit + index + 1}</span>
+      ),
     },
     {
       key: 'name',
       header: 'Product Name',
-      width: '250px',
-      render: (product) => <div className="font-semibold text-gray-900">{product.name}</div>,
+      width: '210px',
+      render: (product) => (
+        <div
+          className="font-semibold text-gray-900 truncate cursor-pointer max-w-[220px]"
+          title={product.name}
+        >
+          {product.name}
+        </div>
+      ),
     },
     {
       key: 'description',
       header: 'Description',
+      width: '320px',
       render: (product) => (
-        <div className="text-gray-600 text-sm leading-relaxed max-w-xs truncate">
+        <div
+          className="text-gray-600 text-sm truncate cursor-pointer max-w-[800px]"
+          title={product.description}
+        >
           {product.description}
         </div>
       ),
@@ -134,7 +168,7 @@ const ProductsPage = () => {
                 e.stopPropagation()
                 handleEditProduct(product)
               }}
-              className="px-3 py-1.5 text-sm font-semibold text-blue-600 border border-blue-600 rounded-md bg-white hover:bg-blue-50 transition-colors"
+              className="px-3 py-1.5 text-sm font-semibold text-blue-600 border border-blue-600 rounded-md bg-white hover:bg-blue-50 transition-colors cursor-pointer"
             >
               ✏️ Edit
             </button>
@@ -143,7 +177,7 @@ const ProductsPage = () => {
                 e.stopPropagation()
                 handleDeleteProduct(product)
               }}
-              className="px-3 py-1.5 text-sm font-semibold text-red-600 border border-red-600 rounded-md bg-white hover:bg-red-50 transition-colors"
+              className="px-3 py-1.5 text-sm font-semibold text-red-600 border border-red-600 rounded-md bg-white hover:bg-red-50 transition-colors cursor-pointer"
             >
               🗑️
             </button>
@@ -165,21 +199,21 @@ const ProductsPage = () => {
         {role === 'admin' && (
           <button
             onClick={handleAddProduct}
-            className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:from-emerald-700 hover:to-emerald-800 hover:-translate-y-1 hover:shadow-xl active:translate-y-0 transition-all duration-200 whitespace-nowrap"
+            className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:from-emerald-700 hover:to-emerald-800 hover:-translate-y-1 hover:shadow-xl active:translate-y-0 transition-all duration-200 whitespace-nowrap cursor-pointer"
           >
             ➕ Add Product
           </button>
         )}
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards (Toàn bộ sản phẩm) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-blue-200">
           <div className="text-5xl mb-3 animate-pulse">📦</div>
           <div className="text-sm text-blue-700 font-semibold mb-1 uppercase tracking-wide">
             Total Products
           </div>
-          <div className="text-4xl font-black text-blue-900">{products.length}</div>
+          <div className="text-4xl font-black text-blue-900">{allProductsForStats.length}</div>
         </div>
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-purple-200">
           <div className="text-5xl mb-3 animate-pulse">📊</div>
@@ -187,7 +221,7 @@ const ProductsPage = () => {
             Total Quantity
           </div>
           <div className="text-4xl font-black text-purple-900">
-            {products.reduce((acc, p) => acc + p.quantity, 0)}
+            {allProductsForStats.reduce((acc, p) => acc + p.quantity, 0)}
           </div>
         </div>
         <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-emerald-200">
@@ -197,8 +231,8 @@ const ProductsPage = () => {
           </div>
           <div className="text-4xl font-black text-emerald-900">
             $
-            {products.length > 0
-              ? products.reduce((acc, p) => acc + p.price * p.quantity, 0).toFixed(0)
+            {allProductsForStats.length > 0
+              ? allProductsForStats.reduce((acc, p) => acc + p.price * p.quantity, 0).toFixed(0)
               : '0'}
           </div>
         </div>
@@ -209,14 +243,18 @@ const ProductsPage = () => {
           </div>
           <div className="text-4xl font-black text-amber-900">
             $
-            {products.length > 0
-              ? (products.reduce((acc, p) => acc + p.price, 0) / products.length).toFixed(2)
+            {allProductsForStats.length > 0
+              ? (
+                  allProductsForStats.reduce((acc, p) => acc + p.price, 0) /
+                  allProductsForStats.length
+                ).toFixed(2)
               : '0'}
           </div>
         </div>
       </div>
 
       {/* Products Table */}
+
       <Table
         columns={columns}
         data={products}
@@ -224,6 +262,9 @@ const ProductsPage = () => {
         emptyMessage="No products available. Click 'Add Product' to create one."
         emptyIcon="📦"
       />
+
+      {/* Pagination */}
+      <Pagination currentPage={pageParam} totalPages={totalPages} onPageChange={handlePageChange} />
 
       {/* Product Modal */}
       <AddOrUpdateProductModal

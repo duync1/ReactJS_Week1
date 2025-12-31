@@ -20,8 +20,14 @@ instance.interceptors.request.use(
 )
 
 instance.interceptors.response.use(
-  (response) => response.data ?? response,
-  (error) => Promise.reject(error?.response?.data?.message || error)
+  (response) => response.data,
+  (error) => {
+    return Promise.reject({
+      message: error.response?.data?.message || 'Unknown error',
+      statusCode: error.response?.status,
+      raw: error.response?.data,
+    })
+  }
 )
 
 export default instance

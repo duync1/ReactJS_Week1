@@ -22,9 +22,11 @@ const LoginPage = () => {
       .unwrap()
       .then(() => {
         toast.success('Login successful!')
-        navigate('/')
+        navigate('/admin/products')
       })
-      .catch(() => toast.error('Login failed. Please check your credentials.'))
+      .catch((error) => {
+        toast.error(error?.message || 'Login failed. Please check your credentials.')
+      })
   }
 
   return (
@@ -118,7 +120,7 @@ const LoginPage = () => {
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform transition duration-150 ease-in-out hover:scale-[1.02] active:scale-[0.98]"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform transition duration-150 ease-in-out hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <svg

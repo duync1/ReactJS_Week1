@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode } from 'react'
 
 export interface Column<T> {
@@ -82,7 +81,7 @@ const Table = <T,>({
                   >
                     {column.render
                       ? column.render(item, index)
-                      : String((item as any)[column.key] || '')}
+                      : String((item as Record<string, unknown>)[column.key] || '')}
                   </td>
                 ))}
               </tr>

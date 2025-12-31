@@ -57,8 +57,8 @@ const AddOrUpdateProductModal = ({
     if (formData.price <= 0) {
       newErrors.price = 'Price must be greater than 0'
     }
-    if (formData.quantity < 0) {
-      newErrors.quantity = 'Quantity cannot be negative'
+    if (formData.quantity <= 0) {
+      newErrors.quantity = 'Quantity must be greater than 0'
     }
 
     setErrors(newErrors)
@@ -119,7 +119,7 @@ const AddOrUpdateProductModal = ({
             </div>
             <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+              className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all cursor-pointer"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
@@ -231,13 +231,13 @@ const AddOrUpdateProductModal = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-8 py-3 text-sm font-bold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 hover:shadow-md transition-all"
+                className="px-8 py-3 text-sm font-bold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 hover:shadow-md transition-all cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className={`px-8 py-3 text-sm font-bold text-white rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 transition-all ${
+                className={`px-8 py-3 text-sm font-bold text-white rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 transition-all cursor-pointer ${
                   product
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700'
                     : 'bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800'

@@ -52,13 +52,13 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, itemName }: ConfirmDel
             <div className="flex gap-4 justify-center">
               <button
                 onClick={onClose}
-                className="px-8 py-3 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 hover:shadow-md transition-all min-w-[130px]"
+                className="px-8 py-3 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 hover:shadow-md transition-all min-w-[130px] cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl shadow-lg hover:from-red-700 hover:to-red-800 hover:-translate-y-0.5 active:translate-y-0 transition-all min-w-[130px]"
+                className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl shadow-lg hover:from-red-700 hover:to-red-800 hover:-translate-y-0.5 active:translate-y-0 transition-all min-w-[130px] cursor-pointer"
               >
                 🗑️ Delete
               </button>

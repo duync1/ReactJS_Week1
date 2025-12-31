@@ -29,12 +29,13 @@ export const router = createBrowserRouter([
         element: <LayoutPage />,
         children: [
           {
-            index: true,
-            element: <ProductsPage />,
-          },
-          {
             path: 'admin/products',
             element: <ProductsPage />,
+          },
+          // Catch-all route: chuyển về login nếu không khớp
+          {
+            path: '*',
+            element: <LoginPage />,
           },
         ],
       },

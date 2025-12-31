@@ -28,10 +28,17 @@ export const login = createAsyncThunk('auth/login', async (data: LoginDTO) => {
   return response.data
 })
 
-export const register = createAsyncThunk('auth/register', async (data: RegisterDTO) => {
-  const response = await registerApi(data)
-  return response.data
-})
+export const register = createAsyncThunk(
+  'auth/register',
+  async (data: RegisterDTO, { rejectWithValue }) => {
+    try {
+      const response = await registerApi(data)
+      return response
+    } catch (error: unknown) {
+      return rejectWithValue(error)
+    }
+  }
+)
 
 const authSlice = createSlice({
   name: 'auth',
