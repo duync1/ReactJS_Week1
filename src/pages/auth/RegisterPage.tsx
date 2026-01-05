@@ -139,7 +139,7 @@ const RegisterPage = () => {
             </div>
 
             {/* Terms & Conditions */}
-            <div className="flex items-start">
+            {/* <div className="flex items-start">
               <div className="flex items-center h-5">
                 <input
                   id="terms"
@@ -160,7 +160,7 @@ const RegisterPage = () => {
                   </a>
                 </label>
               </div>
-            </div>
+            </div> */}
 
             {/* Submit Button */}
             <div>
