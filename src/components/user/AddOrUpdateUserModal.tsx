@@ -1,50 +1,44 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from 'react'
 
-import { type Product } from '../../types/Product'
-import type { CreateProductDTO } from '../../types/dto/CreateProductDTO'
+import { type User } from '../../types/User'
+import type { CreateUserDTO } from '../../types/dto/CreateUserDTO'
 
-interface AddOrUpdateProductModalProps {
+interface AddOrUpdateUserModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (product: CreateProductDTO) => void
-  product?: Product | null
+  onSave: (user: CreateUserDTO) => void
+  user?: User | null
 }
 
-const AddOrUpdateProductModal = ({
-  isOpen,
-  onClose,
-  onSave,
-  product,
-}: AddOrUpdateProductModalProps) => {
-  const [formData, setFormData] = useState<CreateProductDTO>({
-    name: '',
-    description: '',
-    price: 0,
-    quantity: 0,
-  })
+const AddOrUpdateUserModal = ({ isOpen, onClose, onSave, user }: AddOrUpdateUserModalProps) => {
+  const getInitialFormData = (): CreateUserDTO => {
+    if (user) {
+      return {
+        email: user.email || '',
+        password: '', // Password will be optional for update
+        fullName: user.fullName || '',
+        role: user.role || 'user',
+      }
+    }
+    return {
+      email: '',
+      password: '',
+      fullName: '',
+      role: 'user',
+    }
+  }
 
+  const [formData, setFormData] = useState<CreateUserDTO>(getInitialFormData)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isMouseDownOnBackdrop, setIsMouseDownOnBackdrop] = useState(false)
 
   useEffect(() => {
-    if (product) {
-      setFormData({
-        name: product.name || '',
-        description: product.description || '',
-        price: typeof product.price === 'number' ? product.price : 0,
-        quantity: typeof product.quantity === 'number' ? product.quantity : 0,
-      })
-    } else {
-      setFormData({
-        name: '',
-        description: '',
-        price: 0,
-        quantity: 0,
-      })
+    if (isOpen) {
+      setFormData(getInitialFormData())
+      setErrors({})
     }
-    setErrors({})
-  }, [product, isOpen])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, user?.id])
 
   // Close modal on ESC key
   useEffect(() => {
@@ -78,17 +72,20 @@ const AddOrUpdateProductModal = ({
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Invalid email format'
     }
-    if (!formData.description.trim()) {
-      newErrors.description = 'Description is required'
+
+    if (!user && !formData.password.trim()) {
+      newErrors.password = 'Password is required'
+    } else if (formData.password.trim() && formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters'
     }
-    if (formData.price <= 0) {
-      newErrors.price = 'Price must be greater than 0'
-    }
-    if (formData.quantity <= 0) {
-      newErrors.quantity = 'Quantity must be greater than 0'
+
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Full name is required'
     }
 
     setErrors(newErrors)
@@ -102,18 +99,18 @@ const AddOrUpdateProductModal = ({
       return
     }
 
-    const productData: CreateProductDTO = {
-      name: formData.name,
-      description: formData.description,
-      price: formData.price,
-      quantity: formData.quantity,
+    const userData: CreateUserDTO = {
+      email: formData.email,
+      password: formData.password,
+      fullName: formData.fullName,
+      role: formData.role,
     }
 
-    onSave(productData)
+    onSave(userData)
     onClose()
   }
 
-  const handleChange = (field: keyof Omit<Product, 'id'>, value: string | number) => {
+  const handleChange = (field: keyof CreateUserDTO, value: string) => {
     setFormData({ ...formData, [field]: value })
     // Clear error when user types
     if (errors[field]) {
@@ -141,12 +138,10 @@ const AddOrUpdateProductModal = ({
           <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 sticky top-0 bg-white z-10 rounded-t-2xl">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                {product ? 'Edit Product' : 'Add New Product'}
+                {user ? 'Edit User' : 'Add New User'}
               </h2>
               <p className="text-sm text-gray-600">
-                {product
-                  ? 'Update product information'
-                  : 'Fill in the details to add a new product'}
+                {user ? 'Update user information' : 'Fill in the details to add a new user'}
               </p>
             </div>
             <button
@@ -167,94 +162,98 @@ const AddOrUpdateProductModal = ({
           {/* Modal Body */}
           <form onSubmit={handleSubmit}>
             <div className="px-6 py-6 space-y-5">
-              {/* Name */}
+              {/* Email */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Product Name <span className="text-red-500">*</span>
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleChange('email', e.target.value)}
+                  placeholder="Enter email address"
+                  disabled={!!user}
+                  className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
+                    user ? 'bg-gray-100 cursor-not-allowed' : ''
+                  } ${
+                    errors.email
+                      ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
+                      : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
+                  }`}
+                />
+                {errors.email && (
+                  <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                    <span>⚠️</span> {errors.email}
+                  </p>
+                )}
+              </div>
+
+              {/* Password (optional when editing) */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Password {!user && <span className="text-red-500">*</span>}
+                  {user && (
+                    <span className="text-xs text-gray-500 ml-2">(leave blank to keep)</span>
+                  )}
+                </label>
+                <input
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => handleChange('password', e.target.value)}
+                  placeholder={
+                    user
+                      ? 'Leave blank to keep current password'
+                      : 'Enter password (min 6 characters)'
+                  }
+                  className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
+                    errors.password
+                      ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
+                      : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
+                  }`}
+                />
+                {errors.password && (
+                  <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                    <span>⚠️</span> {errors.password}
+                  </p>
+                )}
+              </div>
+
+              {/* Full Name */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => handleChange('name', e.target.value)}
-                  placeholder="Enter product name"
+                  value={formData.fullName}
+                  onChange={(e) => handleChange('fullName', e.target.value)}
+                  placeholder="Enter full name"
                   className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
-                    errors.name
+                    errors.fullName
                       ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
                       : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
                   }`}
                 />
-                {errors.name && (
+                {errors.fullName && (
                   <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                    <span>⚠️</span> {errors.name}
+                    <span>⚠️</span> {errors.fullName}
                   </p>
                 )}
               </div>
 
-              {/* Description */}
+              {/* Role */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Description <span className="text-red-500">*</span>
+                  Role <span className="text-red-500">*</span>
                 </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => handleChange('description', e.target.value)}
-                  placeholder="Enter product description"
-                  rows={4}
-                  className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all resize-y shadow-sm hover:shadow-md ${
-                    errors.description
-                      ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
-                      : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
-                  }`}
-                />
-                {errors.description && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                    <span>⚠️</span> {errors.description}
-                  </p>
-                )}
-              </div>
-
-              {/* Price and Quantity */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Price */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Price <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={(e) => handleChange('price', parseFloat(e.target.value) || 0)}
-                    placeholder="0.00"
-                    className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
-                      errors.price
-                        ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
-                        : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
-                    }`}
-                  />
-                  {errors.price && <p className="mt-1 text-xs text-red-600">{errors.price}</p>}
-                </div>
-
-                {/* Quantity */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Quantity <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.quantity}
-                    onChange={(e) => handleChange('quantity', parseInt(e.target.value) || 0)}
-                    placeholder="0"
-                    className={`w-full px-4 py-3 border-2 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md ${
-                      errors.quantity
-                        ? 'border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100'
-                        : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
-                    }`}
-                  />
-                  {errors.quantity && (
-                    <p className="mt-1 text-xs text-red-600">{errors.quantity}</p>
-                  )}
-                </div>
+                <select
+                  value={formData.role}
+                  onChange={(e) => handleChange('role', e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-base outline-none transition-all shadow-sm hover:shadow-md focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
               </div>
             </div>
 
@@ -270,12 +269,12 @@ const AddOrUpdateProductModal = ({
               <button
                 type="submit"
                 className={`px-8 py-3 text-sm font-bold text-white rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 transition-all cursor-pointer ${
-                  product
+                  user
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700'
                     : 'bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800'
                 }`}
               >
-                {product ? '💾 Update Product' : '➕ Add Product'}
+                {user ? '💾 Update User' : '➕ Add User'}
               </button>
             </div>
           </form>
@@ -285,4 +284,4 @@ const AddOrUpdateProductModal = ({
   )
 }
 
-export default AddOrUpdateProductModal
+export default AddOrUpdateUserModal

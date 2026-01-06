@@ -17,8 +17,13 @@ export const deleteProductByIdApi = (id: number) => {
   return axios.delete(`/products/${id}`)
 }
 
-export const getAllProductsApi = (page: number, limit: number) => {
+export const getAllProductsApi = (
+  page: number,
+  limit: number,
+  search?: string,
+  sortPrice?: 'ASC' | 'DESC'
+) => {
   return axios.get('/products', {
-    params: { page, limit },
+    params: { page, limit, search, sortPrice },
   })
 }

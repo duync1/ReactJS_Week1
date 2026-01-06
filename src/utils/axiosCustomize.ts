@@ -10,7 +10,10 @@ instance.interceptors.request.use(
   (config) => {
     const accessToken = store.getState().auth.access_token
 
-    if (accessToken && !config.url?.startsWith('/auth')) {
+    const isPublicEndpoint =
+      config.url?.startsWith('/auth/login') || config.url?.startsWith('/auth/register')
+
+    if (accessToken && !isPublicEndpoint) {
       config.headers.Authorization = `Bearer ${accessToken}`
     }
 

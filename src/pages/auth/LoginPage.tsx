@@ -1,10 +1,12 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { useState } from 'react'
 
 import type { LoginDTO } from '../../types/dto/LoginDTO'
 import { useAppDispatch } from '../../redux/store'
 import { login } from '../../redux/slice/authSlice'
+import Loading from '../../components/common/Loading'
 
 const LoginPage = () => {
   const {
@@ -14,10 +16,11 @@ const LoginPage = () => {
   } = useForm<LoginDTO>()
 
   const dispatch = useAppDispatch()
-
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
 
   const onSubmit = (data: LoginDTO) => {
+    setIsLoading(true)
     dispatch(login(data))
       .unwrap()
       .then(() => {
@@ -27,12 +30,16 @@ const LoginPage = () => {
       .catch((error) => {
         toast.error(error?.message || 'Login failed. Please check your credentials.')
       })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-8 relative">
+          {isLoading && <Loading message="Logging in..." color="purple" />}
           {/* Header */}
           <div className="text-center">
             <h2 className="text-3xl font-extrabold text-gray-900">Welcome Back</h2>

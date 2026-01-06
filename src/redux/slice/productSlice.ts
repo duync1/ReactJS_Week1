@@ -27,6 +27,7 @@ interface ProductState {
   limit: number
   totalPages: number
   allProductsForStats: Product[]
+  isLoading: boolean
 }
 
 const initialState: ProductState = {
@@ -37,6 +38,7 @@ const initialState: ProductState = {
   limit: 10,
   totalPages: 0,
   allProductsForStats: [],
+  isLoading: false,
 }
 
 export const createProduct = createAsyncThunk(
@@ -67,10 +69,19 @@ export const getProductById = createAsyncThunk('product/getProductById', async (
 
 export const getAllProducts = createAsyncThunk<
   GetAllProductsResponse,
-  { page: number; limit: number; forStats?: boolean }
->('product/getAllProducts', async (params) => {
-  const response = await getAllProductsApi(params.page, params.limit)
-  return { ...response.data, forStats: params.forStats }
+  { page: number; limit: number; forStats?: boolean; search?: string; sortPrice?: 'ASC' | 'DESC' }
+>('product/getAllProducts', async (params, { rejectWithValue }) => {
+  try {
+    const response = await getAllProductsApi(
+      params.page,
+      params.limit,
+      params.search,
+      params.sortPrice
+    )
+    return { ...response.data, forStats: params.forStats }
+  } catch (error: unknown) {
+    return rejectWithValue(error)
+  }
 })
 
 const productSlice = createSlice({
@@ -105,9 +116,13 @@ const productSlice = createSlice({
           state.currentProduct = action.payload
         }
       })
+      .addCase(getAllProducts.pending, (state) => {
+        state.isLoading = true
+      })
       .addCase(
         getAllProducts.fulfilled,
         (state, action: ReturnType<typeof getAllProducts.fulfilled>) => {
+          state.isLoading = false
           if (action.payload.forStats) {
             state.allProductsForStats = action.payload.items
           } else {
@@ -119,6 +134,9 @@ const productSlice = createSlice({
           }
         }
       )
+      .addCase(getAllProducts.rejected, (state) => {
+        state.isLoading = false
+      })
   },
 })
 

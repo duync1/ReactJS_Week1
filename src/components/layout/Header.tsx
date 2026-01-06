@@ -26,14 +26,6 @@ const Header = () => {
 
       {/* Right Section */}
       <div className="flex items-center gap-3 sm:gap-4">
-        {/* Notifications */}
-        <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors group cursor-pointer">
-          <span className="text-xl group-hover:scale-110 transition-transform inline-block">
-            🔔
-          </span>
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-        </button>
-
         {/* User Menu */}
         <div className="relative">
           <button

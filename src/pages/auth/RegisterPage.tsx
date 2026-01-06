@@ -1,10 +1,13 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
+import { useState } from 'react'
 
 import type { RegisterDTO } from '../../types/dto/RegisterDTO'
 import { useAppDispatch } from '../../redux/store'
 import { register as registerAction } from '../../redux/slice/authSlice'
+import Loading from '../../components/common/Loading'
+
 const RegisterPage = () => {
   const {
     register: formRegister,
@@ -14,13 +17,13 @@ const RegisterPage = () => {
   } = useForm<RegisterDTO & { confirmPassword: string }>()
 
   const password = watch('password')
-
   const dispatch = useAppDispatch()
-
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
 
   const onSubmit = (data: RegisterDTO & { confirmPassword: string }) => {
     const { confirmPassword, ...registerData } = data
+    setIsLoading(true)
     dispatch(registerAction(registerData as RegisterDTO))
       .unwrap()
       .then(() => {
@@ -30,12 +33,16 @@ const RegisterPage = () => {
       .catch((error) => {
         toast.error(error?.message || 'Registration failed. Please try again.')
       })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-8 relative">
+          {isLoading && <Loading message="Creating account..." color="green" />}
           {/* Header */}
           <div className="text-center">
             <h2 className="text-3xl font-extrabold text-gray-900">Create Account</h2>

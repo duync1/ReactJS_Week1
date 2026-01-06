@@ -1,4 +1,7 @@
+import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
+
+import type { RootState } from '../../redux/store'
 
 const Sidebar = () => {
   const navigate = useNavigate()
@@ -11,11 +14,22 @@ const Sidebar = () => {
       path: '/admin/products',
       description: 'Manage products',
     },
+    {
+      icon: '👥',
+      label: 'Users',
+      path: '/admin/users',
+      description: 'Manage users',
+      onlyAdmin: true,
+    },
   ]
 
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path + '/')
   }
+
+  const role = useSelector((state: RootState) => state.auth.user.role)
+
+  const visibleMenuItems = menuItems.filter((item) => !item.onlyAdmin || role === 'admin')
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
@@ -26,7 +40,7 @@ const Sidebar = () => {
 
       {/* Menu Items */}
       <nav className="p-4">
-        {menuItems.map((item) => {
+        {visibleMenuItems.map((item) => {
           const active = isActive(item.path)
           return (
             <button
